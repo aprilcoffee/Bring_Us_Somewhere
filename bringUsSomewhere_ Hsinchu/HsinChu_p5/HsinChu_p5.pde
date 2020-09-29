@@ -10,6 +10,8 @@ PImage img2;
 int globalBoxWidth = 150;
 
 int k = 0;
+
+float trigger = 0;
 void setup() {
   size(1920, 1080, P3D);
   //fullScreen(P3D, 2);
@@ -21,23 +23,22 @@ void setup() {
   buildings = new ArrayList<Building>();
 
   int _counter=0;
-  for (int t=-5; t<5; t++) {
-    for (int z=-5; z<5; z++) {
-      buildings.add(new Building(
-        new PVector(-globalBoxWidth*t, -globalBoxWidth*k +200, globalBoxWidth*z)
-        ));
-    }
+  for (int t=0; t<2; t++) {
+    buildings.add(new Building(
+      t,
+      new PVector(0, -globalBoxWidth*t, 0)
+      ));
   }
-  k++;
   frameRate(30);
 }
 void draw() {
   background(0);
-  //hint(DISABLE_DEPTH_TEST);
+
+  hint(DISABLE_DEPTH_TEST);
   soundCheck();
   float fc = float(frameCount);
 
-  camera(1000, -600, 1500, 0, 0, 0, 0, 1, 0);
+  camera(800, -300, 500, 0, 0, 0, 0, 1, 0);
 
   //lightFalloff(1.0, 0.001, 0.0);
   //pointLight(100, 250, 150, 50, 50, 50);
@@ -54,21 +55,9 @@ void draw() {
   rectMode(CORNER);
   popMatrix();
 
-  int _counter=0;
-
   //vector
 
-  if (frameCount%100==0) {
-    println("hi");
-    for (int t=-5; t<5; t++) {
-      for (int z=-5; z<5; z++) {
-        buildings.add(new Building(
-          new PVector(-globalBoxWidth*t, -globalBoxWidth*k +200, z*globalBoxWidth)
-          ));
-      }
-    }
-    k++;
-  }
+
 
   for (int s=0; s<buildings.size(); s++) {
     Building B = buildings.get(s);
@@ -85,18 +74,22 @@ void draw() {
   //    //.blur(30, 10)
   //    .compose();
   //} else {
+  if (frameCount%2==0) {
 
-  blendMode(BLEND);
-  fx.render()
-    .sobel()
-    .bloom(0.1, 10, 20)
-    .blur(20, 0.1)
-    //.toon()
-    .brightPass(0.1)
-    //.blur(30, 10)
-    .compose();
-  blendMode(BLEND);
+    blendMode(ADD);
+    tint(255,abs(trigger)*1.3);
+    fx.render()
+      .sobel()
+      .bloom(0.1, 10, 20)
+      .blur(20, 0.1)
+      //.toon()
+      //.brightPass(0.1)
+      //.blur(30, 10)
+      .compose();
+    blendMode(BLEND);
+    tint(255, 255);
+  }
 
 
-  println(str(frameRate));
+  //println(str(frameRate));
 }
